@@ -1,20 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import BlogList from "./BlogList";
+
+
 
 
 const Home = () => {
-// let name = 'Mario';
-const [name, setName] = useState('mario');
+    const [blogs, setBlogs] = useState(null);
+    const [isPending, setIsPending] = useState(true);
 
-const handleClick = (e) => {
-    setName('Luigi')
-};
 
+    useEffect(() => {
+        fetch('http://localhost:8000/blogs')
+        .then(res => {
+            return res.json()
+        })
+        .then((data) => {
+            setBlogs(data);
+            setIsPending(false);
+        })
+    }, []);
 
     return ( 
         <div className="home">
-            <h2>Homepage</h2>
-            <p>{name}</p>
-            <button onClick={handleClick}>Click Me</button>
+            {isPending && <div>Loading...</div>}
+            {blogs && <BlogList blogs={blogs} title="All Blogs"/>}
+            
         </div>
      );
 }
